@@ -93,7 +93,9 @@ function deposit(){
                 },
             ]).then((resp)=>{
                 const balance = resp['balance']
-                
+
+                addAmount(accountName,balance)
+                operation()
             })
             .catch(err=>console.log(err))
         }
@@ -117,4 +119,36 @@ function checkAccount(accountName){
         return false
     }
     return true
+}
+
+function addAmount(accountName,amount){
+
+    const accountData = getAccount(accountName)
+
+    if(!amount){
+        console.log(chalk.red('Houve um erro'))
+        return deposit()
+    }
+
+    accountData.balance = parseFloat(amount) + parseFloat(accountData.balance)
+
+fs.writeFileSync(
+    `accounts/${accountName}.json`,
+    JSON.stringify(accountData),
+    function(err){
+        console.log(err)
+    }
+)
+    console.log(chalk.green(`Foi depositado com sucesso o valor der R$${amount}`)),
+    operation()
+
+}
+
+function getAccount(accountName){
+    const accountJSON = fs.readFileSync(`accounts/${accountName}.json`,{
+        encoding:'utf-8',
+        flag : 'r'
+    })
+
+    return JSON.parse(accountJSON)
 }
