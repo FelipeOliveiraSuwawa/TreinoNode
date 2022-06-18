@@ -239,3 +239,55 @@ function removeAmount(accountName,amount){
 
 };
 
+function Emprestimo(){
+
+    inquirer.prompt([
+        {
+            name:'accountName',
+            message:'Qual o nome da sua conta',
+        },
+    ]).then((resp)=>{
+        const accountName = resp['accountName']
+        if(!checkAccount(accountName)){
+            console.log(chalk.bgRed.black('o Nome informado (Não existe) ou (foi inserido errado) tente novamente'))
+            return Emprestimo()
+        }
+        inquirer.prompt([
+            {
+                name:'amount',
+                message:'Qual valor gostaria de fazer emprestimo'
+            }
+        ]).then((resp)=>{
+            const emprestimo = resp['amount']
+            fs.writeFileSync(
+                `accounts/${accountName}.json`,`{"balance":0,"emprestio":0}`,function(err){console.log(err)}
+                //corrigir essa parte depois
+            )
+
+            realizarEmprestimo(accountName,emprestimo)
+            
+        })
+        .catch(err=>console.log(err))
+    })
+    .catch(err=> console.log(err))
+
+}
+
+function realizarEmprestimo(accountName,emprestimo){
+    const accountData = getAccount(accountName)
+
+    if(!emprestimo){
+        console.log(chalk.bgRed.black('ocorreu um erro'))
+    }
+
+    accountData.emprestimo = parseFloat(emprestimo)
+
+    fs.writeFileSync(
+        `accounts/${accountName}.json`,
+        JSON.stringify(accountData),
+        function(err){console.log(err)}
+    )
+
+    console.log(chalk.green('Emprestimo realizado com sucesso'))
+
+}
