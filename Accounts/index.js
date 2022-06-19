@@ -5,6 +5,7 @@ const chalk = require('chalk')
 //modulos internos
 const fs = require('fs')
 const { Console } = require('console')
+const { DefaultSerializer } = require('v8')
 
 operation()
 
@@ -14,7 +15,7 @@ function operation(){
         type:'list',
         name:'action',
         message:'Olá oque deseja fazer',
-        choices:['Criar Conta','Consultar Saldo', 'Depositar', 'Sacar','Emprestimo','Sair'],
+        choices:['Criar Conta','Consultar Saldo', 'Depositar', 'Sacar','Emprestimo','Deletar Conta','Sair'],
     },
 
  ]).then((resp)=>{
@@ -38,6 +39,9 @@ function operation(){
     }
     else if(action==='Emprestimo'){
         Emprestimo()
+    }
+    else if(action==='Deletar Conta'){
+        deletar()
     }
  })
     .catch(err => console.log(err))
@@ -70,7 +74,7 @@ function buildAccount(){
             return
         }
 
-        fs.writeFileSync(`accounts/${accountName}.json`,'{"balance":0}',function(err){console.log(err)},)
+        fs.writeFileSync(`accounts/${accountName}.json`,'{"balance":0,"emprestimo":0}',function(err){console.log(err)},)
 
         console.log(chalk.green('Conta criada com sucesso'))
     })
@@ -259,11 +263,7 @@ function Emprestimo(){
             }
         ]).then((resp)=>{
             const emprestimo = resp['amount']
-            fs.writeFileSync(
-                `accounts/${accountName}.json`,`{"balance":0,"emprestio":0}`,function(err){console.log(err)}
-                //corrigir essa parte depois
-            )
-
+            
             realizarEmprestimo(accountName,emprestimo)
             
         })
@@ -289,5 +289,54 @@ function realizarEmprestimo(accountName,emprestimo){
     )
 
     console.log(chalk.green('Emprestimo realizado com sucesso'))
+    operation()
+
+}
+
+function deletar(){
+
+    inquirer.prompt([
+        {
+            name:'accountName',
+            message:'Qual o nome da sua conta?',
+        },
+    ]).then((resp)=>{
+        const accountName = resp['accountName']
+        if(!checkAccount(accountName)){
+            return deletar()
+        }
+        adeus(accountName)
+    })
+    .catch(err=>console.log(err))
+
+}
+
+
+function adeus(accountName){
+
+    inquirer.prompt([
+        {
+        type:'list',
+        name:'action',
+        message:'Tem certeza que deseja deletar conta?',
+        choices:['Sim','Não'],
+        },
+    ]).then((resp)=>{
+        const action = resp['action'] 
+        if(action==='Sim'){
+            console.log(chalk.red('Espero que um dia possamos nos encontrar'))
+            try{
+                fs.unlinkSync(`./accounts/${accountName}.json`)
+            }catch(err){
+                console.error(err)
+            }
+        }
+        else if(action==='Não'){
+            console.log(chalk.green('Ficamos Feliz por decidir permanecer conosco'))
+            operation()
+        }
+    })
+    .catch(err=>console.log(err))
+
 
 }
