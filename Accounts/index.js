@@ -324,7 +324,7 @@ function adeus(accountName){
     ]).then((resp)=>{
         const action = resp['action'] 
         if(action==='Sim'){
-            console.log(chalk.red('Espero que um dia possamos nos encontrar'))
+            console.log(chalk.red('Espero que um dia possamos nos encontrar novamente'))
             try{
                 fs.unlinkSync(`./accounts/${accountName}.json`)
             }catch(err){
