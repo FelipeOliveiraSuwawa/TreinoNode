@@ -12,68 +12,69 @@ function startOperation(){
         {
             type:'list',
             name:'action',
-            message:'Welcome to Suwawa Game',
-            choices:['Play','Exit'],
-        },
+            message:'Bem vindo ao nosso banco! selecione a opção que irá lhe atender melhor',
+            choices:['1-Ajuda','2-Conta','3-Pix','4-Cartoes','5-Mais-opcoes','6-Sair'],
+        }
+    ]).then((resp)=>{
+
+        const action = resp['action']
+
+        if(action === '1-Ajuda'){
+            ajuda()
+        }
+        else if(action === '2-Conta'){
+            conta()
+        }
+
+        else if(action === '3-Pix'){
+            pix()
+        }
+
+        else if(action === '4-Cartoes'){
+            cartao()
+        }
+        else if(action === '5-Mais-opcoes'){
+            maisopcoes()
+        }
+        else if(action === '6-Sair'){
+           console.log(chalk.bgRed('Muito Obrigado por hoje, o nosso banco está sempre a sua disposicao')) 
+           process.exit()    
+        }
+
+
+    }).catch(err => console.log(err))
+}
+
+function ajuda(){
+    console.log(chalk.bgBlue('Com oque podemos te ajudar'))
+
+    inquirer.prompt([
+        {
+            type:'list',
+            name:'action',
+            message:'Selecione a opção que deseja receber informacao',
+            choices:['1-Cliente-Novo','2-Burocracias','3-Atendimento','4-Voltar-Inicio','5-Sair']
+        }
+
+
     ]).then((resp)=>{
         const action = resp['action']
 
-        if(action ==='Play'){
-            playGame()
+        if(action === '1-Cliente Novo'){
+            sobreClientenovo()
         }
-        else if(action === 'Exit'){
-            console.log(chalk.bgRed('You left the game'))
+        else if(action === '2-Burocracias'){
+            burocracias()
+        }
+        else if(action === '3-Atendimento'){
+            atendimento()
+        }
+        else if(action === '4-Voltar-Inicio'){
+            startOperation()
+        }
+        else if(action === '5-Sair'){
+            console.log(chalk.green('Qualquer coisa estamos aqui para sanar suas duvidas!'))
             process.exit()
         }
-    })
-    .catch(err => console.log(err))}
-
-    function playGame(){
-        inquirer.prompt([
-            {
-                type:'list',
-                name:'action',
-                message:'What gonna do?',
-                choices:['Shop','Farm','Exit'],
-            },
-        ]).then((resp)=>{
-            const action = resp['action']
-
-            if(action === 'Shop'){
-                goShop()
-            }
-            else if(action === 'Farm'){
-                Farmar()
-            }
-            else{
-                console.log(chalk.bgRed('You left the game'))
-                process.exit()
-            }
-        })
-        .catch(err=>console.log(err))
-    }
-
-    function goShop(){
-        inquirer.prompt([
-            {
-                type:'list',
-                name:'action',
-                message:'What you gonna buy',
-                choices:['Sword C=25','Dagger C=20','Armor C=50','Exit'],
-            },
-        ]).then((resp)=>{
-            const action = resp['action']
-
-            if(action === 'Sword C=25' && moedas == 25 || action ==='Dagger C=20' && moedas == 20){
-                console.log(chalk.green('The purchase was a success'))
-                if(action ==='Sword C=25'){moedas -= 25}
-                console.log(moedas)
-                return startOperation()
-            }
-                else{
-                    console.log(chalk.red('aa vai trabalha meu brother'))
-                }
-                      
-        })
-        .catch(err=> console.log(err))
-    }
+    }).catch(err=>console.log(err))
+}
